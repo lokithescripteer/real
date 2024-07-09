@@ -1,0 +1,287 @@
+if game.Placeid  == 9872472334 then
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+    local Window = Rayfield:CreateWindow({
+   Name = "Evade Script",
+   LoadingTitle = "Moonlight Hub",
+   LoadingSubtitle = "By TFPLee",
+   ConfigurationSaving = {
+      Enabled = false,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "MoonlightVix"
+   },
+   Discord = {
+      Enabled = false,
+      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Moonlight Hub",
+      Subtitle = "idk",
+      Note = "It is not my fault if u get banned",
+      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+    local MainTab = Window:CreateTab("Home", nil) -- Title, Image
+    local MainSection = MainTab:CreateSection("Main")
+
+    Rayfield:Notify({
+   Title = "The user executed",
+   Content = "very good gui",
+   Duration = 4,
+   Image = nil,
+   Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay!",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+   },
+},
+})
+
+    local Slider = MainTab:CreateSlider({
+   Name = "WalkSpeed",
+   Range = {0, 500},
+   Increment = 1,
+   Suffix = "Speed",
+   CurrentValue = 16,
+   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+           game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)
+   end,
+})
+
+    local Button = Tab:CreateButton({
+   Name = "Monster ESP",
+   Callback = function()
+   local monsterName = "Nextbots" -- Replace with the actual name of your monster
+local boxSize = Vector3.new(10, 10, 10) -- Adjust the size of the box as needed
+local boxColor = Color3.fromRGB(255, 0, 0) -- Adjust the color of the box as needed
+
+local function createBoxAroundMonster(monster)
+    local box = Instance.new("Part")
+    box.Size = boxSize
+    box.Color = boxColor
+    box.Anchored = true
+    box.CanCollide = false
+    box.Transparency = 0.5 -- Adjust the transparency as needed
+    box.CFrame = monster.CFrame
+    box.Parent = workspace
+
+    -- Update the box position when the monster moves
+    game:GetService("RunService").RenderStepped:Connect(function()
+        if monster and monster.Parent then
+            box.CFrame = monster.CFrame
+        else
+            box:Destroy()
+        end
+    end)
+end
+
+local function findMonster()
+    for _, object in pairs(workspace:GetChildren()) do
+        if object:IsA("Model") and object.Name == monsterName then
+            return object.PrimaryPart or object:FindFirstChild("HumanoidRootPart")
+        end
+    end
+    return nil
+end
+
+local monster = findMonster()
+if monster then
+    createBoxAroundMonster(monster)
+end
+
+-- Monitor for new monsters
+workspace.ChildAdded:Connect(function(child)
+    if child:IsA("Model") and child.Name == monsterName then
+        local newMonster = child.PrimaryPart or child:FindFirstChild("HumanoidRootPart")
+        if newMonster then
+            createBoxAroundMonster(newMonster)
+        end
+    end
+end)
+
+   end,
+})
+
+    local TeleportTab = Window:CreateTab("Teleports", nil) -- Title, Image
+    local Section = TeleportsTab:CreateSection("Monsters")
+
+    local Button = TeleportsTab:CreateButton({
+   Name = "across from the monsters",
+   Callback = function()
+   print('Away from Monsters')
+   end,
+})
+
+    local MiscTab = Window:CreateTab("🎲Misc", nil) -- Title, Image
+    local Section = MiscTab:CreateSection("Items")
+
+    local Toggle = MiscTab:CreateToggle({
+   Name = "FlyWithNoclip",
+   CurrentValue = false,
+   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+   print(' FlyWithNoclip')
+                local Player = game.Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local flySpeed = 50 -- Adjust the speed of flying
+local flying = false
+local noclip = false
+local character = Player.Character or Player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+-- Function to toggle flying
+local function toggleFly()
+    flying = not flying
+    if flying then
+        humanoid.PlatformStand = true
+    else
+        humanoid.PlatformStand = false
+    end
+end
+
+-- Function to toggle noclip
+local function toggleNoclip()
+    noclip = not noclip
+end
+
+-- Function to handle input
+local function onInputBegan(input, gameProcessed)
+    if gameProcessed then return end
+
+    if input.KeyCode == Enum.KeyCode.F then
+        toggleFly()
+    elseif input.KeyCode == Enum.KeyCode.N then
+        toggleNoclip()
+    end
+end
+
+-- Function to update flying and noclip
+local function onRenderStepped(deltaTime)
+    if flying then
+        local moveDirection = Vector3.new(0, 0, 0)
+        
+        if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+            moveDirection = moveDirection + workspace.CurrentCamera.CFrame.LookVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+            moveDirection = moveDirection - workspace.CurrentCamera.CFrame.LookVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+            moveDirection = moveDirection - workspace.CurrentCamera.CFrame.RightVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+            moveDirection = moveDirection + workspace.CurrentCamera.CFrame.RightVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+            moveDirection = moveDirection + Vector3.new(0, 1, 0)
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+            moveDirection = moveDirection - Vector3.new(0, 1, 0)
+        end
+        
+        character:Move(moveDirection * flySpeed * deltaTime)
+    end
+
+    if noclip then
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false
+            end
+        end
+    else
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+    end
+end
+
+-- Connect input and render step events
+UserInputService.InputBegan:Connect(onInputBegan)
+RunService.RenderStepped:Connect(onRenderStepped)
+
+   end,
+})
+
+    local Toggle = MiscTabTab:CreateToggle({
+   Name = "Fly",
+   CurrentValue = false,
+   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+   print('fly')
+                local Player = game.Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local flySpeed = 50 -- Adjust the speed of flying
+local flying = false
+local character = Player.Character or Player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+-- Function to toggle flying
+local function toggleFly()
+    flying = not flying
+    if flying then
+        humanoid.PlatformStand = true
+    else
+        humanoid.PlatformStand = false
+    end
+end
+
+-- Function to handle input
+local function onInputBegan(input, gameProcessed)
+    if gameProcessed then return end
+
+    if input.KeyCode == Enum.KeyCode.F then
+        toggleFly()
+    end
+end
+
+-- Function to update flying
+local function onRenderStepped(deltaTime)
+    if flying then
+        local moveDirection = Vector3.new(0, 0, 0)
+        
+        if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+            moveDirection = moveDirection + workspace.CurrentCamera.CFrame.LookVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+            moveDirection = moveDirection - workspace.CurrentCamera.CFrame.LookVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+            moveDirection = moveDirection - workspace.CurrentCamera.CFrame.RightVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+            moveDirection = moveDirection + workspace.CurrentCamera.CFrame.RightVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+            moveDirection = moveDirection + Vector3.new(0, 1, 0)
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+            moveDirection = moveDirection - Vector3.new(0, 1, 0)
+        end
+        
+        character:Move(moveDirection * flySpeed * deltaTime)
+    end
+end
+
+-- Connect input and render step events
+UserInputService.InputBegan:Connect(onInputBegan)
+RunService.RenderStepped:Connect(onRenderStepped)
+
+   end,
+})
+    
