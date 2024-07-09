@@ -1,4 +1,4 @@
-if game.Placeid == 9872472334 then
+if game.Placeid = 9872472334 then
 
 local Rayfield = loadstring(game:HttpGet('https://[Log in to view URL]'))()
 
